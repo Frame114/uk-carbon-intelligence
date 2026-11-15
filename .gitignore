@@ -34,3 +34,7 @@ pgdata/
 .idea/
 .DS_Store
 Thumbs.db
+
+# Generated build metadata and local browser captures
+*.tsbuildinfo
+dashboard.png

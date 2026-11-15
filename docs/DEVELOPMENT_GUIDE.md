@@ -1,44 +1,27 @@
 # Development Guide
 
-## Current state
+## Current implementation
 
-This repository is currently a research and architecture scaffold. It is not yet runnable. Follow ROADMAP.md in order; do not add frontend or backend feature code until the provider fixtures and schema decisions for Milestone 2 are ready.
+This repository contains a runnable local application: FastAPI backend, React/TypeScript/Vite frontend, PostgreSQL persistence, Alembic migration, NESO collector worker, and Docker Compose deployment. For Windows 11 setup follow `LOCAL_TESTING_GUIDE.md`.
 
 ## Repository principles
 
-- Keep this project independent and branded only as UK Carbon Intelligence.
-- Do not change unrelated folders or repositories.
-- Keep provider client models separate from internal API models.
-- Write tests with each service/normalizer.
-- Use UTC-aware datetime values everywhere in the backend.
-- Preserve unknown provider values; do not reject new fields/region IDs without investigation.
-- Never silently replace unavailable regional data with GB values.
-- Never fabricate data for charts.
-- Keep optional AI and MCP disabled unless explicitly configured.
+- Keep the product independent and branded only as UK Carbon Intelligence.
+- Keep provider payload handling separate from public response schemas.
+- Use timezone-aware UTC instants in backend/storage; convert to Europe/London in presentation.
+- Preserve unknown provider region IDs and optional values. Never map unavailable regional data to GB.
+- Do not fabricate chart values or derive intensity from generation mix.
+- Keep AI and MCP out of the active product unless separately specified.
+- Run backend tests/Ruff and frontend tests/build after code changes.
 
-## Local developer requirements (planned)
+## Local development
 
-Docker Desktop and Docker Compose will be the primary way to run the full application. Direct backend/frontend development can use Python and Node toolchains, but should not be required for an end user.
+Full stack: copy `.env.example` to `.env`, set the database password, run `docker compose config --quiet`, then `docker compose up --build -d`. Direct frontend development uses `npm ci` and `npm run dev` in `frontend`; direct backend setup uses `pip install -e '.[test]'` in `backend`. The frontend dev server uses the Vite proxy configured in `vite.config.ts`.
 
-The eventual Windows startup guide will use:
+## Provider fixtures and testing
 
-```powershell
-git clone <repository-url>
-cd uk-carbon-intelligence
-Copy-Item .env.example .env
-docker compose up --build
-```
+Backend tests use mocked HTTPX transport for API behavior, client retry behavior, normalization, classification, and SQLite persistence. Frontend tests use Vitest and Testing Library. Compose is used to check PostgreSQL, migrations, Nginx proxying, and the live worker. Avoid depending on volatile live provider payloads for deterministic unit tests.
 
-These commands are not yet executable because Docker configuration and services have not been implemented.
+## Git
 
-## Provider contract fixture strategy
-
-- Save small, sanitized example payloads for national current, national historical, forecast, regional, regional-by-ID, postcode, factors and generation mix.
-- Keep observation timestamps and fetch times separate.
-- Add fixture coverage for optional actual, missing generationmix, unexpected region IDs, null values and error responses.
-- Re-run a live contract check from a network-enabled dev machine when the provider contract changes.
-- Do not persist live personal postcode inputs in logs; postcode lookup only needs to store an outward code if product functionality requires it.
-
-## Git policy
-
-Review diffs before commits. No commit, push, repository publication or deployment should occur without explicit user approval.
+Review status and diffs before committing. Do not publish secrets; `.env` is ignored.

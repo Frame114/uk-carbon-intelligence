@@ -11,7 +11,7 @@
 2. Data is half-hourly and timestamps are UTC (+00:00). Store UTC instants and convert to Europe/London only for presentation.
 3. Intensity responses can expose separate forecast, actual and index fields. Treat them as optional; do not merge forecast and actual or replace null with zero.
 4. Postcode lookup accepts an outward postcode only (for example G1, ML1, EH1). It returns a regional estimate, not a property-level measurement.
-5. Published region IDs are 1–17. A web-retrieved /regional response on 2026-11-14 also included regionid 18, shortname GB. This is an unresolved documentation/live-response discrepancy; accept unknown IDs safely and preserve source metadata.
+5. NESO documentation enumerates region IDs 1–17. Live `/regional` responses observed during implementation include region ID 18 with short name GB; the application treats it as the GB aggregate and preserves the provider payload. Recheck this mapping against current official documentation before external publication.
 6. National /intensity/{from}/{to} requests are limited to 14 days. National statistics ranges are limited to 30 days; block statistics accept 1–24 hours.
 7. The API reference documents fw24h and fw48h forecast endpoints. Public website material mentions 96+ hours. Do not assume the REST API supports 96 hours until verified.
 8. Documented read operations do not require authentication. NESO says the API is currently free but rate-limited and may block high-volume clients. No numeric quota was found in the reviewed reference.

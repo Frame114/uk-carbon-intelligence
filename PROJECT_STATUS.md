@@ -1,45 +1,26 @@
-# Project Status — UK Carbon Intelligence
+# Project Status
 
-**Current milestone:** 1 — Research and project foundation  
-**Last updated:** 2026-11-14  
-**Repository directory:** `uk-carbon-intelligence/`
+**Current state:** Local application implementation; final clean-volume/runtime verification remains in progress.
 
-## Completed in this workspace
+## Implemented
 
-- Confirmed the official API describes its data as Great Britain (GB), not the whole UK.
-- Reviewed the official API reference and current terms of use.
-- Probed the public national intensity, generation mix, factors and regional endpoints through the web retrieval environment.
-- Confirmed outward-postcode lookup and UTC half-hour data semantics in the API reference.
-- Identified documented historical query limits: 14 days for national intensity range queries; 30 days for statistics; block statistics use a 1–24 hour integer block.
-- Identified a discrepancy requiring defensive implementation: official documentation enumerates region IDs 1–17, while one live /regional response returned an additional regionid: 18, shortname: GB item.
-- Created the initial architecture and research documents.
-- Created a standalone source-tree scaffold.
+- FastAPI provider client and API routes for live current/forecast, historical periods, regions, postcode lookup, statistics, source attribution, and collector status.
+- PostgreSQL persistence models, Alembic initial migration, duplicate-safe observation upserts, and separate background NESO worker.
+- React/TypeScript dashboard with current intensity, regional views, history, charts, comparisons, postcode lookup, and CSV export.
+- Docker Compose stack with PostgreSQL health dependency, backend/frontend/worker services, persistent storage, and Nginx API proxy.
+- Local Windows testing guide and architecture, methodology, regional mapping, API, schema, ingestion, deployment, security, and test documentation.
 
-## Not yet completed
+## Verification evidence
 
-- No application backend, frontend, database or ingestion code has been implemented.
-- No OpenRouter or MCP implementation exists.
-- No Dockerfiles or Docker Compose deployment have been implemented.
-- No automated application tests have been written or run.
-- No GitHub remote repository has been created or configured.
+- Backend suite: 31 passed in the last full run.
+- Frontend suite: 6 passed; TypeScript/Vite production build succeeded.
+- Ruff lint passed after formatting fixes.
+- Compose stack was observed healthy; Alembic revision applied; `/health`, `/ready`, and live current NESO API route returned successfully.
+- Worker completed live collections; PostgreSQL contains 18 regions and archived observations.
 
-## Environment limitations
+## Remaining
 
-- Git is installed in the workspace.
-- Python 3.13.5 and Node.js 22.16.0 are available.
-- Docker and Docker Compose are not installed in this workspace, so Docker verification cannot be performed here.
-- Direct curl requests from this workspace failed because DNS resolution for api.carbonintensity.org.uk is unavailable. API endpoint observations in the research document came from web retrieval, not local runtime requests.
-- No user repository or existing uk-carbon-intelligence directory was mounted when work began. This scaffold was created at /mnt/data/uk-carbon-intelligence and does not modify another project.
-
-## Verification labels
-
-| Capability | Status |
-|---|---|
-| Official documentation reviewed | Complete for initial research |
-| API JSON examples retrieved | Web-retrieved sample responses |
-| Direct API call from this container | Blocked by DNS/network environment |
-| Backend implementation | Not started |
-| Backend tests | Not started |
-| Frontend implementation | Not started |
-| Docker build/startup | Not verified; Docker unavailable |
-| GitHub publication | Not performed |
+- Verify a clean PostgreSQL volume and reconcile first-run archive row counts against `records_written` using a fresh collection.
+- Re-run full test, lint, and format checks after latest documentation/code edits.
+- Review dashboard in a browser at desktop/mobile widths and verify all primary actions interactively.
+- Review the final diff and publish branch if authorized/authenticated.
